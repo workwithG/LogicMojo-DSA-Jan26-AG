@@ -1,0 +1,12 @@
+# Exclude all generated files
+*.log
+*.zip
+
+# Exclude all .pyc files
+*.pyc
+
+# Exclude specific directories
+
+
+
+
