@@ -1,4 +1,4 @@
-def soryArray012(n, arr):
+def sort_an_array(n, arr):
     # Sort the array containing only 0s, 1s, and 2s in-place
     low = 0
     mid = 0
@@ -15,10 +15,10 @@ def soryArray012(n, arr):
             high -= 1
     return arr
 
-def move_zeros_func(n, arr):
+def move_func(n, arr):
     zero_index = 0
     for i in range(n):
-        print(f'Current Array: {arr}, Zero Index: {zero_index}, Current Index: {i}')
+        #print(f'Current Array: {arr}, Zero Index: {zero_index}, Current Index: {i}')
         if arr[i] != 0:
             arr[zero_index], arr[i] = arr[i], arr[zero_index]
             zero_index += 1
@@ -43,29 +43,27 @@ def find_missing(arr):
             A = i + 1    
     return (A, B)  # Find the missing and repeating numbers in the array
 
-def findmissingpositive(nums):
-    n = len(nums)
+def first_missing_positive(n, arr):
     for i in range(n):
-        if nums[i] <= 0:
-            nums[i] = 0
+        if arr[i] <= 0:
+            arr[i] = 0
     for i in range(n):
-        print(f'Iteration {i}: {nums}')
-        print(f'Processing number: {nums[i]} and {nums[nums[i]-1]}')
-        if nums[i] > 0 and nums[i] <= n:
-            if nums[i] < nums[nums[i] - 1]:
-                nums[nums[i] - 1], nums[i] = nums[i], 0
+        print(f'Iteration {i}: {arr}')
+        print(f'Processing number: {arr[i]} and {arr[arr[i]-1]}')
+        if arr[i] > 0 and arr[i] <= n:
+            if arr[i] < arr[arr[i] - 1]:
+                arr[arr[i] - 1], arr[i] = arr[i], 0
             else:
-                print(f'Else: {nums[nums[i] - 1]}')
-                print(f'Before Swap: {nums}')
-                x = nums[nums[i] - 1] 
-                nums[nums[i] - 1] = nums[i]
-                nums[i] = x
-                print(f'After Swap: {nums}')
-        print(f'Iteration {i}: {nums}')
-    return nums
+                print(f'Else: {arr[arr[i] - 1]}')
+                print(f'Before Swap: {arr}')
+                x = arr[arr[i] - 1] 
+                arr[arr[i] - 1] = arr[i]
+                arr[i] = x
+                print(f'After Swap: {arr}')
+        print(f'Iteration {i}: {arr}')
+    return arr
 
-
-def findMajorityElement(nums):
+def majorityElement(n, arr):
     """
     Find the majority element in an array - Moore's Voting Algorithm. 
     The majority element is the element that appears more than n/2 times.
@@ -74,52 +72,51 @@ def findMajorityElement(nums):
     count = 0
     candidate = None
 
-    for num in nums:
+    for num in arr:
         if count == 0:
             candidate = num
         count += (1 if num == candidate else -1)
-    if nums.count(candidate) > len(nums) // 2:
+    if arr.count(candidate) > len(arr) // 2:
         return candidate
     return candidate
 
-def bestTimeToBuyAndSellStock(n, arr):
+def maxProfit(nums, n):
     """
     Best Time to Buy and Sell Stock.
     You are given an array prices where prices[i] is the price of a given stock on the ith day.
     You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
     Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
     """
-    purchase_price = arr[0]
-    curr_high_price = arr[0]
+    purchase_price = nums[0]
+    curr_high_price = nums[0]
     max_profit = 0
     
     for i in range(1, n):
-        print(f'Day {i}: Price={arr[i]}, Purchase Price={purchase_price}, Current High Price={curr_high_price}, Max Profit={max_profit}')
-        if arr[i] < curr_high_price:
+        #print(f'Day {i}: Price={nums[i]}, Purchase Price={purchase_price}, Current High Price={curr_high_price}, Max Profit={max_profit}')
+        if nums[i] < curr_high_price:
             max_profit += curr_high_price - purchase_price
-            purchase_price = curr_high_price = arr[i]
+            purchase_price = curr_high_price = nums[i]
         else:
-            curr_high_price = arr[i]   
-        print(f'After Day {i}: Purchase Price={purchase_price}, Current High Price={curr_high_price}, Max Profit={max_profit}')
+            curr_high_price = nums[i]   
+        #print(f'After Day {i}: Purchase Price={purchase_price}, Current High Price={curr_high_price}, Max Profit={max_profit}')
     max_profit += curr_high_price - purchase_price   
 
     return max_profit
 
-def findSmallestMissingPositive(nums):
+def first_missing_positive(n, arr):
     """
     Find the smallest missing positive integer.
     Given an unsorted integer array nums, return the smallest missing positive integer.
     You must implement an algorithm that runs in O(n) time and uses constant extra space.
     """
-    n = len(nums)
     for i in range(n):
-        if nums[i] <=0 or nums[i] > n:
-            nums[i] = n+1
+        if arr[i] <=0 or arr[i] > n:
+            arr[i] = n+1
     for i in range(n):    
-        if abs(nums[i]) < n+1:
-            nums[abs(nums[i])-1] = abs(nums[abs(nums[i])-1]) * -1
+        if abs(arr[i]) < n+1:
+            arr[abs(arr[i])-1] = abs(arr[abs(arr[i])-1]) * -1
     for i in range(n):
-        if nums[i] > 0:
+        if arr[i] > 0:
             return i + 1        
     return n + 1
 
@@ -200,35 +197,52 @@ def twoSum(target, n, arr):
     return (-1, -1)
 
 
+def left_right(arr):
+    n = len(arr)
+    if n < 3:  
+        return -1
+
+    prefix_max = [0] * n
+    prefix_max[0] = arr[0]
+    for i in range(1, n):
+        prefix_max[i] = max(prefix_max[i-1], arr[i])
+
+    suffix_min = [0] * n
+    suffix_min[-1] = arr[-1]
+    for i in range(n-2, -1, -1):
+        suffix_min[i] = min(suffix_min[i+1], arr[i])
+
+    # interior only: 1..n-2
+    for i in range(1, n-1):
+        if prefix_max[i-1] <= arr[i] <= suffix_min[i+1]:
+            return arr[i]
+
+    return -1
+
+def findDistinctCount(n, arr):
+    # Write your code here
+    count = 0
+    distinct_counts = [-1]*n
+
+    for i in range(n):
+        distinct_counts[abs(arr[i])] = 1
+    
+    for i in range(n):
+        if distinct_counts[i] == 1:
+            count += 1
+    return count        
+
 if __name__ == "__main__":
     print(" Challenges ")
-    #print(f'Sorted Array: {soryArray012(7, [0,2,1,2,0,1,0])}')
-    #print(f'Sorted Array: {soryArray012(5, [2,1,0,1,2])}')
-
-    #print(f'Move Zeros: {move_zeros_func(7, [0,1,0,3,12,0,5])}')
-    #print(f'Move Zeros: {move_zeros_func(6, [1,2,0,0,3, 4])}')
-
-    #print(f'Find Missing: {find_missing([3,7,1,2,8,4,5])}')
-    #print(f'Find Missing: {find_missing([3,1,3])}')
-
-    #print(f'Find Missing Positive: {findmissingpositive([3,4,-1,1])}')
-    #print(f'Find Missing Positive: {findmissingpositive([7,8,9,11,12])}')
-
-    #print(f'Best Time to Buy and Sell Stock: {bestTimeToBuyAndSellStock(6, [7,1,5,3,6,4])}')
-    #print(f'Best Time to Buy and Sell Stock: {bestTimeToBuyAndSellStock(6, [100,120,130,140,150,100])}')
-    #print(f'Best Time to Buy and Sell Stock: {bestTimeToBuyAndSellStock(6, [0,1,0,1,0,1])}')
-
-    #print(f'Max Consecutive Ones: {max_consecutive([1,1,0,1,1,1])}')
-    #print(f'Max Consecutive Ones: {max_consecutive([1,0,1,1,0,1])}')
-
-    #print(f'Rain Water Trapped: {rain_water([0,1,0,2,1,0,1,3,2,1,2,1])}')
-    #print(f'Rain Water Trapped: {rain_water([4,2,0,3,2,5])}')  
-
-    #print(f'Remove Duplicates: {remove_dupli([1,1,2,2,3,3,4,4,5])}')
-    #print(f'Remove Duplicates: {remove_dupli([2,2,2,3,3,4,4,4,5,5])}')
-    #print(f'Remove Duplicates: {remove_dupli([1,2,3,4,5])}')   
-
-    print(f'Two Sum: {twoSum(9, 4, [2,7,11,15])}')
-    print(f'Two Sum: {twoSum(6, 3, [2,3,4])}')
-    print(f'Two Sum: {twoSum(6, 5, [1,2,3,4,6])}')
-    print(f'Two Sum: {twoSum(10, 5, [2,3,4,5,6])}')
+    print(f'Sort Array 012: {sort_an_array(7, [0,2,1,2,0,1,0])}')
+    print(f'Move Zeros: {move_func(8, [0,1,0,3,12,0,5,0])}')
+    print(f'Find Missing and Repeating: {find_missing([3,1,3,4,2])}')
+    print(f'First Missing Positive: {first_missing_positive(5, [3,4,-1,1,2])}')
+    print(f'Majority Element: {majorityElement(7, [2,2,1,1,1,2,1])}')
+    print(f'Best Time to Buy and Sell Stock: {maxProfit([7,1,5,3,6,4], 6)}')
+    print(f'Max Consecutive 1s: {max_consecutive([1,1,0,1,1,1])}')
+    print(f'Rain Water Trapped: {rain_water([0,1,0,2,1,0,1,3,2,1,2,1])}')
+    print(f'Remove Duplicates: {remove_dupli([0,0,1,1,1,2,2,3,3,4])}')
+    print(f'Two Sum: {twoSum(9, 9, [1,2,3,4,6,7,8,9,10])}')
+    print(f'Left Right Element: {left_right([5,1,4,3,6,8,10,7,9])}')
+    print(f'Distinct Count: {findDistinctCount(7, [1,2,2,3,4,4,5])}')
