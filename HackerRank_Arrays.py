@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def reverseArray(a):
     # Write your code here
     n = len(a)
