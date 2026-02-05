@@ -206,12 +206,15 @@ def left_right(arr):
     prefix_max[0] = arr[0]
     for i in range(1, n):
         prefix_max[i] = max(prefix_max[i-1], arr[i])
-
+    
     suffix_min = [0] * n
     suffix_min[-1] = arr[-1]
     for i in range(n-2, -1, -1):
         suffix_min[i] = min(suffix_min[i+1], arr[i])
-
+    
+    print(f'Prefix Max: {prefix_max}')
+    print(f'Array: {arr}')
+    print(f'Suffix Min: {suffix_min}')
     # interior only: 1..n-2
     for i in range(1, n-1):
         if prefix_max[i-1] <= arr[i] <= suffix_min[i+1]:
@@ -230,19 +233,183 @@ def findDistinctCount(n, arr):
     for i in range(n):
         if distinct_counts[i] == 1:
             count += 1
-    return count        
+    return count      
+
+def binary_search(arr, target):
+    n = len(arr)
+    start_idx = 0
+    end_idx = n - 1
+
+    while start_idx <= end_idx:
+        mid_idx = start_idx + (end_idx - start_idx) // 2
+        if arr[mid_idx] == target:
+            return mid_idx
+        elif arr[mid_idx] < target:
+            start_idx = mid_idx + 1
+        else:
+            end_idx = mid_idx - 1
+    return -1
+
+
+def search_element(arr, target):
+    n = len(arr)
+    start_idx, end_idx = 0, n - 1
+    pivot = -1
+    idx = -1
+    while start_idx < end_idx:
+        if arr[start_idx] < arr[end_idx]:
+           break
+
+        mid_idx = start_idx + (end_idx - start_idx) // 2
+
+        if arr[start_idx] == arr[mid_idx] == arr[end_idx]:
+            start_idx += 1
+            end_idx -= 1
+            continue
+
+        if arr[mid_idx] <= arr[end_idx]:
+            end_idx = mid_idx
+        else:
+            start_idx = mid_idx + 1
+
+    if target == arr[start_idx]:
+        return start_idx
+    
+    if start_idx == 0:
+        return binary_search(arr, target)
+    #search right block
+    idxR = binary_search(arr[start_idx+1:n], target)
+    if idxR != -1:
+        idxR += start_idx + 1
+    #search left block
+    idxL = binary_search(arr[0:start_idx], target)
+
+    return idxR if idxR != -1 else idxL
+
+def singlelement(n, arr):
+    start_idx = 0
+    end_idx = n-1
+    while start_idx <= end_idx:
+        if start_idx == end_idx:
+            return arr[start_idx]
+        mid_idx = start_idx + (end_idx - start_idx) // 2
+        evenBlocks = True if (mid_idx) % 2 == 0 else False 
+
+        if arr[mid_idx] != arr[mid_idx - 1]  and arr[mid_idx] != arr[mid_idx + 1]:
+            return arr[mid_idx]
+        if (arr[mid_idx] == arr[mid_idx - 1] and evenBlocks) or (arr[mid_idx] == arr[mid_idx + 1] and (not evenBlocks)):
+            end_idx = mid_idx - 1
+        else:
+            start_idx = mid_idx + 1
+        
+    return None    
+
+
+def median_array(nums1, nums2):
+    
+    n, m = len(nums1), len(nums1)
+
+    if n > m:
+        nums1, nums2 = nums2, nums1
+        n, m = m, n
+
+    if n == 0 and m == 0:
+        return None  
+
+    total = n + m
+    half = (total + 1) // 2 
+
+    low, high = 0, n
+
+    while low <= high:
+        cutA = (low + high) // 2
+        cutB = half - cutA
+
+        leftA  = float("-inf") if cutA == 0 else nums1[cutA - 1]
+        rightA = float("inf")  if cutA == n else nums1[cutA]
+        leftB  = float("-inf") if cutB == 0 else nums2[cutB - 1]
+        rightB = float("inf")  if cutB == m else nums2[cutB]
+
+        if leftA <= rightB and leftB <= rightA:
+            if total % 2 == 1:
+                return float(max(leftA, leftB))
+            return float((max(leftA, leftB) + min(rightA, rightB)) / 2)
+
+        elif leftA > rightB:
+            high = cutA - 1
+        else:
+            low = cutA + 1
+
+    return None
+
+
+def kthSmallest(n, arr1, m, arr2, k):
+    # Write your code here
+    if n > m:
+        return kthSmallest(m,arr2, n, arr1, k)
+
+    if k < 1 or k > n + m:
+        return None
+
+    # cutA can be from max(0, k-m) to min(k, n)
+    low = max(0, k - m)
+    high = min(k, n)
+
+    while low <= high:
+        cutA = (low + high) // 2
+        cutB = k - cutA
+
+        leftA  = float("-inf") if cutA == 0 else arr1[cutA - 1]
+        rightA = float("inf")  if cutA == n else arr1[cutA]
+        leftB  = float("-inf") if cutB == 0 else arr2[cutB - 1]
+        rightB = float("inf")  if cutB == m else arr2[cutB]
+
+        # Valid partition
+        if leftA <= rightB and leftB <= rightA:
+            return max(leftA, leftB)
+
+        # Move cutA left
+        if leftA > rightB:
+            high = cutA - 1
+        else:
+            # Move cutA right
+            low = cutA + 1
+
+    return max(leftA, leftB)
 
 if __name__ == "__main__":
     print(" Challenges ")
-    print(f'Sort Array 012: {sort_an_array(7, [0,2,1,2,0,1,0])}')
-    print(f'Move Zeros: {move_func(8, [0,1,0,3,12,0,5,0])}')
-    print(f'Find Missing and Repeating: {find_missing([3,1,3,4,2])}')
-    print(f'First Missing Positive: {first_missing_positive(5, [3,4,-1,1,2])}')
-    print(f'Majority Element: {majorityElement(7, [2,2,1,1,1,2,1])}')
-    print(f'Best Time to Buy and Sell Stock: {maxProfit([7,1,5,3,6,4], 6)}')
-    print(f'Max Consecutive 1s: {max_consecutive([1,1,0,1,1,1])}')
-    print(f'Rain Water Trapped: {rain_water([0,1,0,2,1,0,1,3,2,1,2,1])}')
-    print(f'Remove Duplicates: {remove_dupli([0,0,1,1,1,2,2,3,3,4])}')
-    print(f'Two Sum: {twoSum(9, 9, [1,2,3,4,6,7,8,9,10])}')
-    print(f'Left Right Element: {left_right([5,1,4,3,6,8,10,7,9])}')
-    print(f'Distinct Count: {findDistinctCount(7, [1,2,2,3,4,4,5])}')
+    #print(f'Sort Array 012: {sort_an_array(7, [0,2,1,2,0,1,0])}')
+    #print(f'Move Zeros: {move_func(8, [0,1,0,3,12,0,5,0])}')
+    #print(f'Find Missing and Repeating: {find_missing([3,1,3,4,2])}')
+    #print(f'First Missing Positive: {first_missing_positive(5, [3,4,-1,1,2])}')
+    #print(f'Majority Element: {majorityElement(7, [2,2,1,1,1,2,1])}')
+    #print(f'Best Time to Buy and Sell Stock: {maxProfit([7,1,5,3,6,4], 6)}')
+    #print(f'Max Consecutive 1s: {max_consecutive([1,1,0,1,1,1])}')
+    #print(f'Rain Water Trapped: {rain_water([0,1,0,2,1,0,1,3,2,1,2,1])}')
+    #print(f'Remove Duplicates: {remove_dupli([0,0,1,1,1,2,2,3,3,4])}')
+    #print(f'Two Sum: {twoSum(9, 9, [1,2,3,4,6,7,8,9,10])}')
+    #print(f'Left Right Element: {left_right([5,1,4,3,6,8,10,7,9])}')
+    #print(f'Distinct Count: {findDistinctCount(7, [1,2,2,3,4,4,5])}')
+    #print(f'Search Rotated Array: {search_element([4,5,6,7,0,0,0,1,2], 4)}')
+    #print(f'The only Non repeating element : {singlelement(7, [3,7,7,10,10,11,11])}')
+    #print(f'The only Non repeating element : {singlelement(1, [5])}')
+    #print(f'The only Non repeating element : {singlelement(3, [1, 1, 2])}')
+    #print(f'The only Non repeating element : {singlelement(3, [2, 3, 3])}')
+    #print(f'The only Non repeating element : {singlelement(5, [1, 1, 2, 3, 3])}')
+    #print(f'The only Non repeating element : {singlelement(5, [1, 1, 2, 2, 3])}')
+    #print(f'The only Non repeating element : {singlelement(7, [1, 1, 2, 2, 3, 4, 4])}')
+    #print(f'The only Non repeating element : {singlelement(7, [0, 0, 1, 2, 2, 3, 3])}')
+    #print(f'The only Non repeating element : {singlelement(9, [1, 1, 2, 2, 3, 3, 4, 5, 5])}')
+    #print(f'The only Non repeating element : {singlelement(9, [2, 2, 3, 3, 4, 4, 5, 6, 6])}')
+    #print(f'The only Non repeating element : {singlelement(11, [1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6])}')
+    
+
+    #print(f'Kth Smallest element : {kthSmallest(10, [1,4,7,9,12,15,18,21,25,30], 9, [2,3,6,8,10,14,17,22,28], 8)}')
+    #print(f'Kth Smallest element : {kthSmallest(10, [1,4,7,9,12,15,18,21,25,30], 9, [2,3,6,8,10,14,17,22,28], 12)}')
+    #print(f'Kth Smallest element : {kthSmallest(10, [1,4,7,9,12,15,18,21,25,30], 9, [2,3,6,8,10,14,17,22,28], 15)}')
+    #print(f'Kth Smallest element : {kthSmallest(1, [1000], 10, [1,2,3,4,5,6,7,8,9,10], 4)}')
+
+    print(f'Median: {median_array([2,4], [3,5])}')
+    print(f'Median: {median_array([1,2], [3,4])}')
+    
